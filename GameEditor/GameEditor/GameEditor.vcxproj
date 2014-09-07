@@ -80,8 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameEditor.cpp" />
+    <ClCompile Include="Logic\variant.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Logic\card.h" />
+    <ClInclude Include="Logic\cardtemplate.h" />
+    <ClInclude Include="Logic\variant.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
