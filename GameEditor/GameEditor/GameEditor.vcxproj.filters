@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{7dece4eb-d56f-458f-b16f-2c6dbd911eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\HeaderFiles">
+      <UniqueIdentifier>{491c862c-a665-472d-b2aa-9f79c4b6872c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\SourceFiles">
+      <UniqueIdentifier>{d62cdd17-3bea-4fa8-9fc5-154724fd7cc2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -21,8 +30,11 @@
     <ClCompile Include="GameEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Logic\variant.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\Base\tabfile.cpp">
+      <Filter>Base\SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Base\variant.cpp">
+      <Filter>Base\SourceFiles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,8 +47,11 @@
     <ClInclude Include="Logic\cardtemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Logic\variant.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\Base\include\tabfile.h">
+      <Filter>Base\HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Base\include\variant.h">
+      <Filter>Base\HeaderFiles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,9 +7,13 @@
 // set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 
 #include "main.h"
+#include "../Base/include/tabfile.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	KTabFile file;
+	file.InitWithPath("test.txt");
+
 	return 0;
 }
 
