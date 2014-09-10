@@ -44,14 +44,14 @@
     <ClInclude Include="Logic\card.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Logic\cardtemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Base\include\tabfile.h">
       <Filter>Base\HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="..\Base\include\variant.h">
       <Filter>Base\HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Logic\cardhelper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

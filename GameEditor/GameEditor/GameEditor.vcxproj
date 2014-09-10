@@ -87,7 +87,7 @@
     <ClInclude Include="..\Base\include\tabfile.h" />
     <ClInclude Include="..\Base\include\variant.h" />
     <ClInclude Include="Logic\card.h" />
-    <ClInclude Include="Logic\cardtemplate.h" />
+    <ClInclude Include="Logic\cardhelper.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
