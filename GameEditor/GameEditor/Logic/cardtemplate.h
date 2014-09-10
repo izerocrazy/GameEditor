@@ -13,21 +13,21 @@
 #ifndef __cardtemplate_h__
 #define __cardtemplate_h__
 
-class KCardTemplate
+class KCardHelper
 {
 public:
-	KCardTemplate();
-	~KCardTemplate();
+	KCardHelper();
+	~KCardHelper();
 
 private:
 
 };
 
-KCardTemplate::KCardTemplate()
+KCardHelper::KCardHelper()
 {
 }
 
-KCardTemplate::~KCardTemplate()
+KCardHelper::~KCardHelper()
 {
 }
 #endif // __cardtemplate_h__
