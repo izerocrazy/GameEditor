@@ -15,7 +15,9 @@ KVariant::~KVariant()
 	std::map<const char*,KTreeNode*>::iterator it = m_pChildren.begin();
 	for (; it != m_pChildren.end(); ++it)
 	{
-		delete it->second;
+		if (it->second) {
+			delete it->second;
+		}
 	}
 
 	// 清理 list 子节点
@@ -34,7 +36,7 @@ KVariant::~KVariant()
 	}
 }
 
-KVariant* KVariant::operator[](int nIndex)
+KVariant& KVariant::operator[](int nIndex)
 {
 	KVariant* pNode = (KVariant*)m_pContainer;
 	int nPos = 0;
@@ -59,10 +61,10 @@ KVariant* KVariant::operator[](int nIndex)
 		AddTail(pNode);
 	}
 
-	return pNode;
+	return *pNode;
 }
 
-KVariant* KVariant::operator[](const char* szIndex)
+KVariant& KVariant::operator[](const char* szIndex)
 {
 	KVariant* pNode = (KVariant*)m_pChildren[szIndex];
 	if (pNode == NULL)
@@ -74,7 +76,25 @@ KVariant* KVariant::operator[](const char* szIndex)
 		pNode->m_IndexContent.CopyString(szIndex);
 	}
 
-	return pNode;
+	return *pNode;
+}
+
+KVariant& KVariant::operator=(int nValue)
+{
+	SetNumber(nValue);
+	return *this;
+}
+
+KVariant& KVariant::operator=(char* szValue)
+{
+	SetString(szValue);
+	return *this;
+}
+
+KVariant& KVariant::operator=(const char* szValue)
+{
+	SetString(szValue);
+	return *this;
 }
 
 /************************************************************************/

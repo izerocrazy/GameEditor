@@ -26,6 +26,21 @@ public:
 	~KTabFile();
 
 	void InitWithPath(const char* szFile);
+
+	int GetFileHight()
+	{
+		return m_nFileHight;
+	}
+
+	vector<char*>&	GetTitle()
+	{
+		return m_lstTitle;
+	}
+
+	list<vector<char*>>&	GetContent()
+	{
+		return m_FileContent;
+	}
 protected:
 	bool OpenFile(const char* szFile);
 	void OpenFileStream(const char* szFile);

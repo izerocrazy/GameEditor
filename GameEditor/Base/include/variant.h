@@ -144,8 +144,11 @@ public:
 
 	KVariant();
 	virtual ~KVariant();
-	KVariant* operator[](int nIndex);
-	KVariant* operator[](const char* szIndex);
+	KVariant& operator[](int nIndex);
+	KVariant& operator[](const char* szIndex);
+	KVariant& operator=(int nValue);
+	KVariant& operator=(char* szValue);
+	KVariant& operator=(const char* szValue);
 
 
 	/************************************************************************/

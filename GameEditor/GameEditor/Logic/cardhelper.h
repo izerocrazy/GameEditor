@@ -13,6 +13,8 @@
 #ifndef __cardtemplate_h__
 #define __cardtemplate_h__
 
+#include "../../Base/include/variant.h"
+
 class KCardHelper
 {
 public:
@@ -20,7 +22,7 @@ public:
 	~KCardHelper();
 
 private:
-
+	KVariant m_CardSetting;
 };
 
 KCardHelper::KCardHelper()

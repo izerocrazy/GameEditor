@@ -121,6 +121,7 @@ void KTabFile::InitWithPath(const char* szFile)
 		m_nWidth++;
 	}
 	
+	m_nFileHight = 0;
 	// 读取其余行为 FileContent
 	while ((m_FileStream.rdstate() & std::ifstream::eofbit) == 0)
 	{
@@ -140,5 +141,6 @@ void KTabFile::InitWithPath(const char* szFile)
 			p = strtok(NULL, d);
 		}
 		m_FileContent.push_back(line);
+		m_nFileHight = m_nFileHight + 1;
 	}
 }
