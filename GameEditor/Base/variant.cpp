@@ -29,11 +29,13 @@ KVariant::~KVariant()
 		pNode = pNext;
 	}
 
-	// 清理自己
+	// 清理自己中的 content
 	if (m_uType == eVT_STRING)
 	{
 		m_Content.Uninit();
 	}
+	// 清理 index content
+	m_IndexContent.Uninit();
 }
 
 KVariant& KVariant::operator[](int nIndex)
@@ -94,6 +96,64 @@ KVariant& KVariant::operator=(char* szValue)
 KVariant& KVariant::operator=(const char* szValue)
 {
 	SetString(szValue);
+	return *this;
+}
+
+KVariant& KVariant::operator=(KVariant& sVariant)
+{
+	// 先拷贝 content 部分
+	switch (sVariant.GetType())
+	{
+	case eVT_BOOL:
+		SetBool(sVariant.GetBool());
+		break;
+	case eVT_FLOAT:
+		SetFloat(sVariant.GetFloat());
+		break;
+	case eVT_LONG_NUMBER:
+		SetLongNumber(sVariant.GetLongNumber());
+		break;
+	case eVT_NUMBER:
+		SetNumber(sVariant.GetNumber());
+		break;
+	case eVT_STRING:
+		SetString(sVariant.GetString());
+		break;
+	}
+
+	// 再拷贝 index content
+	if (sVariant.GetIndexName())
+	{
+		m_IndexContent.CopyString(sVariant.GetIndexName());
+	}
+
+	// 然后拷贝 list
+	KListNode* pVar = sVariant.GetHeader();
+	while (pVar != NULL)
+	{
+		KVariant* pNewVariant = new KVariant;
+		*pNewVariant = *((KVariant*)pVar);
+		AddTail(pNewVariant);
+
+		pVar = pVar->GetNext();
+	}
+
+	// 最后是 tree
+	//std::map<const char*, KTreeNode*> vChildren = sVariant.GetTree();
+	std::map<const char*,KTreeNode*>::iterator it = sVariant.m_pChildren.begin();
+	for (; it != sVariant.m_pChildren.end(); ++it)
+	{
+		if (it->second) {
+			KVariant* pVar = (KVariant*) it->second;
+			KVariant* pNewVariant = new KVariant;
+			*pNewVariant = *pVar;
+			m_pChildren[pVar->GetIndexName()] = pNewVariant;
+
+			pNewVariant->m_pParent = this;
+			// pNewVariant->m_IndexContent.CopyString(pVar->GetIndexName());
+		}
+	}
+
 	return *this;
 }
 

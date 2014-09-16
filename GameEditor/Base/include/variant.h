@@ -61,7 +61,7 @@ public:
 	{
 		if (m_pBuffer)
 		{
-			delete []m_pBuffer;
+			delete m_pBuffer;
 
 			m_pBuffer = NULL;
 			m_nBufferSize = 0;
@@ -108,6 +108,11 @@ public:
 		return m_pNext;
 	}
 
+	KListNode* GetHeader()
+	{
+		return m_pContainer;
+	}
+
 protected:
 	KListNode* m_pNext;
 	KListNode* m_pPrev;
@@ -117,6 +122,14 @@ protected:
 
 class KTreeNode
 {
+public:
+	KTreeNode()
+	{
+		m_pChildren.clear();
+	}
+
+	std::map<const char*, KTreeNode*> GetTree() { return m_pChildren; }
+
 protected:
 	KTreeNode* m_pParent;
 	std::map<const char*, KTreeNode*> m_pChildren;
@@ -146,6 +159,7 @@ public:
 	virtual ~KVariant();
 	KVariant& operator[](int nIndex);
 	KVariant& operator[](const char* szIndex);
+	KVariant& operator=(KVariant& );
 	KVariant& operator=(int nValue);
 	KVariant& operator=(char* szValue);
 	KVariant& operator=(const char* szValue);
@@ -186,6 +200,10 @@ public:
 	float ToFloat();
 	bool ToBool();
 	const char* ToString();
+
+	unsigned short GetType() { return m_uType; }
+	int GetIndexNumber() { return m_uType; }
+	char* GetIndexName() { return m_IndexContent.GetBuffer(); }
 
 protected:
 private:
