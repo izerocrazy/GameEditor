@@ -19,11 +19,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	KVariant var;
 	list<vector<char*>>& content = file.GetContent();
 	list<vector<char*>>::iterator it = content.begin();
+	vector<char*>& lstTitle = file.GetTitle();
 	int i = 0;
 	for (; it != content.end(); it++)
 	{
 		KVariant temp;
-		vector<char*>& lstTitle = file.GetTitle();
 		for (int n = 0; n < lstTitle.size(); n ++)
 		{
 			temp[lstTitle[n]] = (*it)[n];

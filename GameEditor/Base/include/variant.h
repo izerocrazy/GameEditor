@@ -48,7 +48,8 @@ public:
 		if (nBufferSize > 0 && InitBufferSize(nBufferSize)) // 未做内存判断
 		{
 			memcpy(m_pBuffer, szString, nBufferSize);
-			m_pBuffer[nBufferSize] = 0;
+			m_pBuffer[nStrLen] = 0;	
+			// 此处曾有一个 bug，nStrlen 写成 nBufferSize，越界。所以在 delete[] 的时候报错，错误为 CRT detected that the application wrote to memory after end of heap buffer
 		}
 	}
 
@@ -61,7 +62,7 @@ public:
 	{
 		if (m_pBuffer)
 		{
-			delete m_pBuffer;
+			delete []m_pBuffer;
 
 			m_pBuffer = NULL;
 			m_nBufferSize = 0;
@@ -101,6 +102,11 @@ public:
 		pNode = pTailNode;
 		pTailNode->m_pPrev = pPrev;
 		pTailNode->m_pNext = NULL;
+
+		if (m_pContainer == NULL)
+		{
+			m_pContainer = pNode;
+		}
 	}
 
 	KListNode* GetNext()
@@ -127,6 +133,9 @@ public:
 	{
 		m_pChildren.clear();
 	}
+
+	virtual ~KTreeNode()
+	{};
 
 	std::map<const char*, KTreeNode*> GetTree() { return m_pChildren; }
 
