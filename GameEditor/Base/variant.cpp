@@ -5,6 +5,8 @@
 KVariant::KVariant()
 {
 	m_uType = eVT_STRING;
+	m_uIndexType = eVIT_STRING;
+
 	m_Content.Init();
 	m_IndexContent.Init();
 }
@@ -39,17 +41,20 @@ KVariant::~KVariant()
 		m_Content.Uninit();
 	}
 	// 清理 index content
-	m_IndexContent.Uninit();
+	if (m_uIndexType == eVIT_STRING)
+	{
+		m_IndexContent.Uninit();
+	}
 }
 
 KVariant& KVariant::operator[](int nIndex)
 {
 	KVariant* pNode = (KVariant*)m_pContainer;
+
 	int nPos = 0;
 	while (pNode)
 	{
-		if (pNode->m_nIndexNumer != 0)
-			nPos = pNode->m_nIndexNumer;
+		nPos = pNode->m_nIndexNumer;
 
 		if (nPos == nIndex)
 		{
@@ -62,9 +67,8 @@ KVariant& KVariant::operator[](int nIndex)
 	if (pNode == NULL)
 	{
 		pNode = new KVariant;
-		pNode->m_nIndexNumer = nIndex;
-
 		AddTail(pNode);
+		pNode->SetIndexNumebr(nIndex);
 	}
 
 	return *pNode;
@@ -79,7 +83,7 @@ KVariant& KVariant::operator[](const char* szIndex)
 		m_pChildren[szIndex] = pNode;
 		
 		pNode->m_pParent = this;
-		pNode->m_IndexContent.CopyString(szIndex);
+		pNode->SetIndexName(szIndex);
 	}
 
 	return *pNode;
@@ -125,11 +129,15 @@ KVariant& KVariant::operator=(KVariant& sVariant)
 		break;
 	}
 
-	// 再拷贝 index content
-	if (sVariant.GetIndexName())
+	// 不拷贝 index content
+	/*if (sVariant.GetIndexType() == eVIT_STRING)
 	{
 		m_IndexContent.CopyString(sVariant.GetIndexName());
+	} else if (sVariant.GetIndexType() == eVIT_NUMBER)
+	{
+		m_nIndexNumer = sVariant.GetIndexNumber();
 	}
+	m_uIndexType = sVariant.GetIndexType();*/
 
 	// 然后拷贝 list
 	KListNode* pVar = sVariant.GetHeader();
@@ -138,6 +146,7 @@ KVariant& KVariant::operator=(KVariant& sVariant)
 		KVariant* pNewVariant = new KVariant;
 		*pNewVariant = *((KVariant*)pVar);
 		AddTail(pNewVariant);
+		pNewVariant->SetIndexNumebr(((KVariant*)pVar)->GetIndexNumber());
 
 		pVar = pVar->GetNext();
 	}
@@ -154,7 +163,7 @@ KVariant& KVariant::operator=(KVariant& sVariant)
 			m_pChildren[pVar->GetIndexName()] = pNewVariant;
 
 			pNewVariant->m_pParent = this;
-			// pNewVariant->m_IndexContent.CopyString(pVar->GetIndexName());
+			pNewVariant->SetIndexName(pVar->GetIndexName());
 		}
 	}
 
@@ -273,6 +282,40 @@ char* KVariant::GetString()
 	return NULL;
 }
 
+int KVariant::GetIndexNumber()
+{
+	assert(GetIndexType() == eVIT_NUMBER); 
+	return m_nIndexNumer; 
+}
+
+void KVariant::SetIndexNumebr(int nIndex)
+{
+	if (GetIndexType() == eVIT_STRING)
+	{
+		m_IndexContent.Uninit();
+	}
+
+	m_nIndexNumer = nIndex;
+	m_uIndexType = eVIT_NUMBER;
+}
+
+const char *KVariant::GetIndexName()
+{ 
+	assert(GetIndexType() == eVIT_STRING);
+	return m_IndexContent.GetBuffer(); 
+}
+
+void KVariant::SetIndexName(const char* szName)
+{
+	if (GetIndexType() == eVIT_STRING)
+	{
+		m_IndexContent.Uninit();
+	}
+
+	m_IndexContent.CopyString(szName);
+	m_uIndexType = eVIT_STRING;
+}
+
 /************************************************************************/
 /* Add                                                                     */
 /************************************************************************/
@@ -347,4 +390,70 @@ const char* KVariant::ToString()
 {
 	assert(0);
 	return (char *)"";
+}
+
+void KVariant::ShowVariant(int nState)
+{
+	// index content
+	char szTempInfo[256];
+	memset(szTempInfo, 0, 256);
+	if (nState)
+	{
+		memset(szTempInfo, '\t', nState);
+	}
+	printf("\n%s %s\n", szTempInfo, "begin variant ");
+	switch (GetIndexType())
+	{
+	case eVIT_NUMBER:
+		printf("%s index number: %d\n", szTempInfo, GetIndexNumber());
+		break;
+	case eVIT_STRING:
+		printf("%s index name: %s\n", szTempInfo, GetIndexName());
+		break;
+	}
+
+	// content 部分
+	switch (GetType())
+	{
+	case eVT_BOOL:
+		printf("%s bool: %b\n", szTempInfo, GetBool());
+		break;
+	case eVT_FLOAT:
+		printf("%s float: %f\n", szTempInfo, GetFloat());
+		break;
+	case eVT_LONG_NUMBER:
+		printf("%s long: %l\n", szTempInfo, GetLongNumber());
+		break;
+	case eVT_NUMBER:
+		printf("%s number: %d\n", szTempInfo, GetNumber());
+		break;
+	case eVT_STRING:
+		if (m_Content.GetBuffer())
+		{
+			printf("%s string: %s\n", szTempInfo, m_Content.GetBuffer());
+		}
+		break;
+	}
+
+	// list
+	KListNode* pVar = GetHeader();
+	while (pVar != NULL)
+	{
+		((KVariant*)pVar)->ShowVariant(nState + 1);
+
+		pVar = pVar->GetNext();
+	}
+
+	// tree
+	std::map<const char*,KTreeNode*>::iterator it = m_pChildren.begin();
+	for (; it != m_pChildren.end(); ++it)
+	{
+		if (it->second) {
+			KVariant* pVar = (KVariant*) it->second;
+			pVar->ShowVariant(nState + 1);
+		}
+	}
+
+	printf("%s %s\n", szTempInfo, "end variant ");
+	return;
 }

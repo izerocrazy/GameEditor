@@ -88,6 +88,12 @@ public:
 	virtual ~KListNode()
 	{};
 
+	KListNode* GetNext()
+	{
+		return m_pNext;
+	}
+
+protected:
 	void AddTail(KListNode* pTailNode)
 	{
 		KListNode* pNode = m_pContainer;
@@ -100,8 +106,13 @@ public:
 		}
 
 		pNode = pTailNode;
-		pTailNode->m_pPrev = pPrev;
-		pTailNode->m_pNext = NULL;
+		pNode->m_pPrev = pPrev;
+		pNode->m_pNext = NULL;
+
+		if (pPrev)
+		{
+			pPrev->m_pNext = pNode;
+		}
 
 		if (m_pContainer == NULL)
 		{
@@ -109,17 +120,12 @@ public:
 		}
 	}
 
-	KListNode* GetNext()
-	{
-		return m_pNext;
-	}
 
 	KListNode* GetHeader()
 	{
 		return m_pContainer;
 	}
 
-protected:
 	KListNode* m_pNext;
 	KListNode* m_pPrev;
 
@@ -137,9 +143,8 @@ public:
 	virtual ~KTreeNode()
 	{};
 
-	std::map<const char*, KTreeNode*> GetTree() { return m_pChildren; }
-
 protected:
+	std::map<const char*, KTreeNode*> GetTree() { return m_pChildren; }
 	KTreeNode* m_pParent;
 	std::map<const char*, KTreeNode*> m_pChildren;
 };
@@ -162,6 +167,12 @@ public:
 		eST_TREE = 0x02,
 		eST_LIST = 0x04,
 		eST_ALL = 0x07,
+	};
+
+	enum eVARIANT_INDEX_TYPE
+	{
+		eVIT_NUMBER,
+		eVIT_STRING,
 	};
 
 	KVariant();
@@ -192,6 +203,11 @@ public:
 	void SetString(const char* szContent, int nSize = 0);
 	char* GetString();
 
+	int GetIndexNumber();
+	void SetIndexNumebr(int nIndex);
+	const char* GetIndexName();
+	void SetIndexName(const char* szName);
+
 	/************************************************************************/
 	/* add                                                                     */
 	/************************************************************************/
@@ -210,9 +226,10 @@ public:
 	bool ToBool();
 	const char* ToString();
 
+
 	unsigned short GetType() { return m_uType; }
-	int GetIndexNumber() { return m_uType; }
-	char* GetIndexName() { return m_IndexContent.GetBuffer(); }
+	unsigned short GetIndexType() { return m_uIndexType; }
+	void ShowVariant(int nState = 0);
 
 protected:
 private:
@@ -234,6 +251,7 @@ private:
 	};
 
 	unsigned short				m_uType;
+	unsigned short				m_uIndexType;
 	//unsigned short				m_uStatus;
 
 }; 

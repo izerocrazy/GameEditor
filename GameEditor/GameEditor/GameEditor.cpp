@@ -34,7 +34,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	// variant 传值给一个 cardhelper 对象，并用其创建一个 card 对象
-
+	var.ShowVariant();
 
 	// 使用 cardhelper 对象，保存数据库
 
