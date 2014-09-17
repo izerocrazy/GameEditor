@@ -15,9 +15,10 @@ KTabFile::~KTabFile()
 	{
 		delete[] *it;
 	}
+	m_lstTitle.clear();
 
 	list<vector<char*>>::iterator it2 = m_FileContent.begin();
-	for (; it2 != m_FileContent.end(); it++)
+	for (; it2 != m_FileContent.end(); it2++)
 	{
 		it = (*it2).begin();
 		for (; it != (*it2).end(); it++)
@@ -25,6 +26,7 @@ KTabFile::~KTabFile()
 			delete[] *it;
 		}
 	}
+	m_FileContent.clear();
 }
 
 bool KTabFile::OpenFile(const char* szFile)

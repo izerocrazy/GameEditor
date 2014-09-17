@@ -17,8 +17,10 @@ KVariant::~KVariant()
 	{
 		if (it->second) {
 			delete it->second;
+			it->second = NULL;
 		}
 	}
+	m_pChildren.clear();
 
 	// 清理 list 子节点
 	KListNode* pNode = m_pContainer;
@@ -26,6 +28,8 @@ KVariant::~KVariant()
 	{
 		KListNode* pNext = pNode->GetNext();
 		delete pNode;
+		pNode = NULL;
+
 		pNode = pNext;
 	}
 
