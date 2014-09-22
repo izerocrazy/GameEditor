@@ -14,22 +14,21 @@
 #define __cardtemplate_h__
 
 #include "../../Base/include/variant.h"
+#include <vector>
+
+using namespace std;
 
 class KCardHelper
 {
 public:
-	KCardHelper();
+	KCardHelper(KVariant* pCardSetting, vector<char*>* plstTitle);
 	~KCardHelper();
 
+	void ShowCardSettingTable();
+
 private:
-	KVariant m_CardSetting;
+	KVariant* m_pCardSetting;
+	vector<char*>* m_plstTitle;
 };
 
-KCardHelper::KCardHelper()
-{
-}
-
-KCardHelper::~KCardHelper()
-{
-}
 #endif // __cardtemplate_h__

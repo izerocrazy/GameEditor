@@ -82,6 +82,7 @@
     <ClCompile Include="..\Base\tabfile.cpp" />
     <ClCompile Include="..\Base\variant.cpp" />
     <ClCompile Include="GameEditor.cpp" />
+    <ClCompile Include="Logic\cardhelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Base\include\tabfile.h" />

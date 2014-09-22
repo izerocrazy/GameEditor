@@ -9,8 +9,9 @@
 #include "main.h"
 #include "../Base/include/tabfile.h"
 #include "../Base/include/variant.h"
+#include "./Logic/cardhelper.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+void ProcessCardSetting()
 {
 	// 读取入 tab 文件并转为 variant
 	KTabFile file;
@@ -28,15 +29,25 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			temp[lstTitle[n]] = (*it)[n];
 		}
-		
+
 		var[i] = temp;
 		i++;
 	}
 
-	// variant 传值给一个 cardhelper 对象，并用其创建一个 card 对象
 	var.ShowVariant();
 
-	// 使用 cardhelper 对象，保存数据库
+	// variant 传值给一个 cardhelper 对象，并用其创建一个 card 对象
+	KCardHelper CardHelper(&var, &lstTitle);
+
+	// 使用 cardhelper 对象，保存数据库，进行增，删，改操作
+	CardHelper.ShowCardSettingTable();
+
+	getchar();
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	ProcessCardSetting();
 
 	return 0;
 }

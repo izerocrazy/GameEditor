@@ -36,6 +36,9 @@
     <ClCompile Include="..\Base\variant.cpp">
       <Filter>Base\SourceFiles</Filter>
     </ClCompile>
+    <ClCompile Include="Logic\cardhelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

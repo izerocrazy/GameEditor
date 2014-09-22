@@ -160,10 +160,11 @@ KVariant& KVariant::operator=(KVariant& sVariant)
 			KVariant* pVar = (KVariant*) it->second;
 			KVariant* pNewVariant = new KVariant;
 			*pNewVariant = *pVar;
-			m_pChildren[pVar->GetIndexName()] = pNewVariant;
 
 			pNewVariant->m_pParent = this;
 			pNewVariant->SetIndexName(pVar->GetIndexName());
+
+			m_pChildren[pNewVariant->GetIndexName()] = pNewVariant;
 		}
 	}
 
@@ -388,8 +389,7 @@ bool KVariant::ToBool()
 
 const char* KVariant::ToString()
 {
-	assert(0);
-	return (char *)"";
+	return GetString();
 }
 
 void KVariant::ShowVariant(int nState)

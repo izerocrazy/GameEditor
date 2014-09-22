@@ -79,6 +79,8 @@ class KListNode
 public:
 	KListNode()
 	{
+		m_nSum = 0;
+
 		m_pNext = NULL;
 		m_pPrev = NULL;
 
@@ -91,6 +93,11 @@ public:
 	KListNode* GetNext()
 	{
 		return m_pNext;
+	}
+
+	int GetSum()
+	{
+		return m_nSum;
 	}
 
 protected:
@@ -118,6 +125,8 @@ protected:
 		{
 			m_pContainer = pNode;
 		}
+
+		m_nSum = m_nSum + 1;
 	}
 
 
@@ -126,6 +135,7 @@ protected:
 		return m_pContainer;
 	}
 
+	int m_nSum;
 	KListNode* m_pNext;
 	KListNode* m_pPrev;
 
@@ -135,6 +145,17 @@ protected:
 class KTreeNode
 {
 public:
+	struct CompareConstString
+	{
+	public:
+		bool operator()(const char* pA, const char* pB)
+		{
+			return strcmp(pA, pB) < 0;
+		}
+	};
+
+	typedef std::map<const char*, KTreeNode*, CompareConstString> VARIANT_MAP;
+
 	KTreeNode()
 	{
 		m_pChildren.clear();
@@ -144,9 +165,9 @@ public:
 	{};
 
 protected:
-	std::map<const char*, KTreeNode*> GetTree() { return m_pChildren; }
+	VARIANT_MAP GetTree() { return m_pChildren; }
 	KTreeNode* m_pParent;
-	std::map<const char*, KTreeNode*> m_pChildren;
+	VARIANT_MAP m_pChildren;
 };
 
 class KVariant : public KListNode, public KTreeNode
