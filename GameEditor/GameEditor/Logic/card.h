@@ -17,7 +17,10 @@
 class KCard
 {
 public:
+
 protected:
+
 private:
+
 };
 #endif // __card_h__

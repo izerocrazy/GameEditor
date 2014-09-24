@@ -8,25 +8,123 @@ KTabFile::KTabFile()
 
 KTabFile::~KTabFile()
 {
+	// CloseFileStream();
 	CloseFile();
+}
 
-	vector<char*>::iterator it = m_lstTitle.begin();
-	for (;it != m_lstTitle.end(); it++)
+/*void KTabFile::OpenFileStream(const char* szFile)
+{
+#ifdef __linux
 	{
-		delete[] *it;
-	}
-	m_lstTitle.clear();
-
-	list<vector<char*>>::iterator it2 = m_FileContent.begin();
-	for (; it2 != m_FileContent.end(); it2++)
-	{
-		it = (*it2).begin();
-		for (; it != (*it2).end(); it++)
+		char *ptr = PathName;
+		while(*ptr)
 		{
-			delete[] *it;
+			if (*ptr == '\\')
+				*ptr = '/';
+			ptr++;
 		}
 	}
-	m_FileContent.clear();
+#endif	// #ifdef __linux
+	m_FileStream.close();
+
+	m_FileStream.open(szFile);
+}
+
+void KTabFile::CloseFileStream()
+{
+	m_FileStream.close();
+}*/
+
+struct KTabFile::TabLine* KTabFile::CreateTabLine(const char* szLine)
+{
+	struct TabLine* pRet = new struct TabLine;
+	pRet->nNum = 0;
+
+	char d = '\t';
+	size_t nLineLen = strlen(szLine);
+
+	for (int n = 0; n < nLineLen; n++)
+	{
+		if (szLine[n] == d)
+		{
+			pRet->nNum++;
+		}
+	}
+	
+	if (pRet->nNum == 0)
+	{
+		return pRet;
+	}
+
+	pRet->lstTab = new char*[pRet->nNum];
+	const char* pCur = szLine;
+	const char* pLastCur = pCur;
+	int nTabCur = 0;
+	for (int n = 0; n < nLineLen; n++)
+	{
+		if (szLine[n] == d)
+		{
+			int nLen = pCur - pLastCur;
+			if (nLen > 0)
+			{
+				char* pTemp = new char[nLen + 1];
+				pTemp[nLen] = '\0';
+				memcpy(pTemp, pLastCur, nLen);
+				pRet->lstTab[nTabCur] = pTemp;
+			}
+			else
+			{
+				pRet->lstTab[nTabCur] = NULL;
+			}
+
+			nTabCur++;
+			pCur++;
+			pLastCur = pCur;
+		} 
+		else 
+		{
+			pCur++;
+		}
+	}
+
+	return pRet;
+}
+
+void KTabFile::InitWithPath(const char* szFile)
+{
+	// 读到文件，获得文件句柄
+	if (OpenFile(szFile) == false)
+	{
+		assert(0);
+		return;
+	}
+
+	long Offset = ftell(m_hFile);
+	fseek(m_hFile, 0, SEEK_END);
+	int nFileSize = ftell(m_hFile);
+	fseek(m_hFile, Offset, SEEK_SET);
+
+	if (nFileSize == 0)
+	{
+		assert(0);
+		return;
+	}
+
+	// 读取出文件所有字符串
+	char * szFileContent = new char[nFileSize + 1];
+	szFileContent[nFileSize] = 0;
+	long lBytesReaded = (unsigned long)fread(szFileContent, 1, nFileSize, m_hFile);
+	if (lBytesReaded != nFileSize)
+	{
+		assert(0);
+		return;
+	}
+
+	// 第一次遍历，得出多少行
+
+	// 第二次组合出 TabLine
+
+	delete szFileContent;
 }
 
 bool KTabFile::OpenFile(const char* szFile)
@@ -49,10 +147,10 @@ bool KTabFile::OpenFile(const char* szFile)
 	const char*	pMode = "rb";
 	/*if (WriteSupport)
 	{
-		if (g_IsFileExist(PathName))
-			pMode = "r+b";
-		else
-			pMode = "a+b";
+	if (g_IsFileExist(PathName))
+	pMode = "r+b";
+	else
+	pMode = "a+b";
 	}*/
 	m_hFile = fopen(szFile, pMode);
 
@@ -67,16 +165,9 @@ bool KTabFile::OpenFile(const char* szFile)
 #endif	// #ifdef __linux
 
 	/*if (WriteSupport && m_hFile)
-		CONTENT_BUFFER_NOT_SUPPORT;*/
+	CONTENT_BUFFER_NOT_SUPPORT;*/
 
 	return (m_hFile != NULL);
-}
-
-void KTabFile::OpenFileStream(const char* szFile)
-{
-	m_FileStream.close();
-
-	m_FileStream.open(szFile);
 }
 
 void KTabFile::CloseFile()
@@ -88,61 +179,19 @@ void KTabFile::CloseFile()
 	}
 }
 
-void KTabFile::InitWithPath(const char* szFile)
+//////////////////////////////////////////////////////////////////////////
+
+KTitleTabFile::KTitleTabFile()
 {
-	// 读到文件，获得文件句柄
-	/*if (OpenFile(szFile) == false)
+
+}
+
+KTitleTabFile::~KTitleTabFile()
+{
+	vector<char*>::iterator it = m_lstTitle.begin();
+	for (;it != m_lstTitle.end(); it++)
 	{
-		assert(0);
-		return;
-	}*/
-	OpenFileStream(szFile);
-	if (m_FileStream.good() == false)
-	{
-		assert(0);
-		return;
+		delete[] *it;
 	}
-
-	char szTemp[1024];
-	memset(szTemp, 0, 1024);
-	// 按 line 读
-	// 读取第一行作为 lstTitle，确定好 vectory 长度，做一个简单优化
-	m_FileStream.getline(szTemp, 1024);
-	const char* d = "\t";	// tab 键
-	char* p = strtok(szTemp, d);
-	m_nWidth = 0;
-	while (p)
-	{
-		printf("%s \n", p);
-		char * pNew = new char[128];
-		strcpy(pNew, p);
-		m_lstTitle.push_back(pNew);
-
-		p = strtok(NULL, d);
-
-		m_nWidth++;
-	}
-	
-	m_nFileHight = 0;
-	// 读取其余行为 FileContent
-	while ((m_FileStream.rdstate() & std::ifstream::eofbit) == 0)
-	{
-		memset(szTemp, 0, 1024);
-		m_FileStream.getline(szTemp, 1024);
-		const char* d = "\t";
-		char* p = strtok(szTemp, d);
-		vector<char*> line;
-		
-		while (p)
-		{
-			printf("%s \n", p);
-			char * pNew = new char[128];
-			strcpy(pNew, p);
-			line.push_back(pNew);
-
-			p = strtok(NULL, d);
-		}
-		m_FileContent.push_back(line);
-		m_nFileHight = m_nFileHight + 1;
-	}
+	m_lstTitle.clear();
 }

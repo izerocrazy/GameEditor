@@ -49,3 +49,18 @@ void KCardHelper::ShowCardSettingTable()
 		printf("\n");
 	}
 }
+
+void KCardHelper::AddOneCardType()
+{
+
+}
+
+void KCardHelper::DeleteOneCardType()
+{
+
+}
+
+void KCardHelper::SaveToTabFile(KTitleTabFile& file)
+{
+
+}

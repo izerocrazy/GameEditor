@@ -14,7 +14,7 @@
 void ProcessCardSetting()
 {
 	// 读取入 tab 文件并转为 variant
-	KTabFile file;
+	KTitleTabFile file;
 	file.InitWithPath("../../Configure/card.txt");
 
 	KVariant var;
@@ -41,6 +41,16 @@ void ProcessCardSetting()
 
 	// 使用 cardhelper 对象，保存数据库，进行增，删，改操作
 	CardHelper.ShowCardSettingTable();
+
+	CardHelper.AddOneCardType();
+	printf("----------> Add Line \n");
+	CardHelper.ShowCardSettingTable();
+
+	CardHelper.DeleteOneCardType();
+	printf("----------> Delete Line \n");
+	CardHelper.ShowCardSettingTable();
+
+	CardHelper.SaveToTabFile(file);
 
 	getchar();
 }

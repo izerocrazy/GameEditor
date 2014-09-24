@@ -14,6 +14,7 @@
 #define __cardtemplate_h__
 
 #include "../../Base/include/variant.h"
+#include "../../Base/include/tabfile.h"
 #include <vector>
 
 using namespace std;
@@ -25,6 +26,12 @@ public:
 	~KCardHelper();
 
 	void ShowCardSettingTable();
+
+	void AddOneCardType();
+
+	void DeleteOneCardType();
+
+	void SaveToTabFile(KTitleTabFile& file);
 
 private:
 	KVariant* m_pCardSetting;

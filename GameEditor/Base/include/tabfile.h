@@ -27,9 +27,51 @@ public:
 
 	void InitWithPath(const char* szFile);
 
+	list<vector<char*>>&	GetContent()
+	{
+		//return m_FileContent;
+	}
+
 	int GetFileHight()
 	{
 		return m_nFileHight;
+	}
+	
+	struct TabLine
+	{
+		char**	lstTab;
+		int nNum;
+	};
+
+private:
+	struct KTabFile::TabLine* CreateTabLine(const char* szLine);
+
+	int						m_nFileHight;
+	struct TabLine*			m_FileContent;
+
+public:
+	bool OpenFile(const char* szFile);
+	void CloseFile();
+private:
+ 	FILE*					m_hFile;
+
+/*private:
+	ifstream				m_FileStream;
+public:
+	void OpenFileStream(const char* szFile);
+	void CloseFileStream();*/
+};
+
+
+class KTitleTabFile
+{
+public:
+	KTitleTabFile();
+	~KTitleTabFile();
+
+	void InitWithPath(const char* szFile)
+	{
+		m_tabFile.InitWithPath(szFile);
 	}
 
 	vector<char*>&	GetTitle()
@@ -39,22 +81,15 @@ public:
 
 	list<vector<char*>>&	GetContent()
 	{
-		return m_FileContent;
+		// 需要去掉第一行
+		return m_tabFile.GetContent();
 	}
-protected:
-	bool OpenFile(const char* szFile);
-	void OpenFileStream(const char* szFile);
-	void CloseFile();
 
 private:
-	FILE*					m_hFile;
-	ifstream				m_FileStream;
-
-	int						m_nFileHight;
+	vector<char*>			m_lstTitle;
 	int						m_nWidth;
 
-	vector<char*>			m_lstTitle;
-	list<vector<char*>>		m_FileContent;
+	KTabFile				m_tabFile;
 };
 
 #endif // __File_h__
