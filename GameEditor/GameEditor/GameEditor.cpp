@@ -18,7 +18,7 @@ void ProcessCardSetting()
 	file.InitWithPath("../../Configure/card.txt");
 
 	KVariant var;
-	list<vector<char*>>& content = file.GetContent();
+	list<vector<char*>> content = file.GetContent();
 	list<vector<char*>>::iterator it = content.begin();
 	vector<char*>& lstTitle = file.GetTitle();
 	int i = 0;
