@@ -83,9 +83,14 @@ struct KTabFile::TabLine* KTabFile::CreateTabLine(const char* szLine, size_t nLi
 	int nTabCur = 0;
 	for (int n = 0; n < nLineLen; n++)
 	{
-		if (szLine[n] == d || n == nLineLen - 1)
+		if (*pCur == d || n == nLineLen - 1)
 		{
 			int nLen = pCur - pLastCur;
+			if (*pCur != d && *pCur != '\r')
+			{
+				nLen++;
+			}
+
 			if (nLen > 0)
 			{
 				char* pTemp = new char[nLen + 1];
@@ -158,10 +163,10 @@ void KTabFile::InitWithPath(const char* szFile)
 	char* pLastCur = pCur;
 	for (int n = 0; n < nFileSize; n++)
 	{
-		if (szFileContent[n] == '\n' || n == nFileSize - 1)
+		if (*pCur == '\n' || n == nFileSize - 1)
 		{
 			int nLen = pCur - pLastCur;
-			if (n == nFileSize - 1)
+			if (*pCur != '\n')	// pCur 不是 \n, 那么长度需要 +1
 			{
 				nLen++;
 			}
