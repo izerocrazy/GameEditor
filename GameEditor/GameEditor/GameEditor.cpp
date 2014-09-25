@@ -10,12 +10,13 @@
 #include "../Base/include/tabfile.h"
 #include "../Base/include/variant.h"
 #include "./Logic/cardhelper.h"
+#include <assert.h>
 
 void ProcessCardSetting()
 {
 	// 读取入 tab 文件并转为 variant
 	KTitleTabFile file;
-	file.InitWithPath("../../Configure/card.txt");
+	assert(file.InitWithPath("../../Configure/card.txt"));
 
 	KVariant var;
 	list<vector<char*>> content = file.GetContent();

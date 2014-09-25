@@ -45,6 +45,7 @@ void KTabFile::CloseFileStream()
 	m_FileStream.close();
 }*/
 
+// 确保 szLine 中过滤掉 \r \n
 struct KTabFile::TabLine* KTabFile::CreateTabLine(const char* szLine, size_t nLineLen)
 {
 	struct TabLine* pRet = new struct TabLine;
@@ -86,7 +87,9 @@ struct KTabFile::TabLine* KTabFile::CreateTabLine(const char* szLine, size_t nLi
 		if (*pCur == d || n == nLineLen - 1)
 		{
 			int nLen = pCur - pLastCur;
-			if (*pCur != d && *pCur != '\r')
+			assert(*pCur != '\r');
+			assert(*pCur != '\n');
+			if (*pCur != d)
 			{
 				nLen++;
 			}
@@ -171,6 +174,13 @@ void KTabFile::InitWithPath(const char* szFile)
 				nLen++;
 			}
 
+#ifdef WIN32
+			else if (*(pCur - 1) == '\r')	// 在 windows 下，必须要过滤掉尾部的 \r
+			{
+				nLen--;
+			}
+#endif
+			
 			m_FileContent[nFileCur] = CreateTabLine(pLastCur, nLen);
 
 			nFileCur++;
@@ -198,12 +208,18 @@ void KTabFile::SaveFile()
 		{
 			lContentBytes += strlen(pLine->lstTab[i]);
 		}
-		lContentBytes += pLine->nNum;	// 每行需要增加 '\t' + '\n'
+
+		if (n != m_nFileHight - 1)
+		{
+			lContentBytes += pLine->nNum;	// 每行需要增加 '\t' + '\n'
+#ifdef WIN32
+			lContentBytes ++;	//每行需要再加 '\r'
+#endif
+		}
 	}
 
-	lContentBytes--;	// 最后一行不需要加 '\n'
-
 	char* szContent = new char[lContentBytes];
+	memset(szContent, 0, lContentBytes);
 	char* pCur = szContent;
 	for (int n = 0; n < m_nFileHight; n++)
 	{
@@ -213,12 +229,18 @@ void KTabFile::SaveFile()
 			strcpy(pCur, pLine->lstTab[i]);
 			pCur += strlen(pLine->lstTab[i]);
 			if (i != pLine->nNum - 1)
+			{
 				*pCur = '\t';
-
-			pCur++;
+				pCur++;
+			}
 		}
+
 		if (n != m_nFileHight - 1)
 		{
+#ifdef WIN32
+			*pCur = '\r';
+			pCur++;
+#endif
 			*pCur = '\n';
 		}
 		pCur++;
@@ -300,7 +322,7 @@ KTitleTabFile::~KTitleTabFile()
 	m_lstTitle.clear();
 }
 
-void KTitleTabFile::InitWithPath(const char* szFile)
+bool KTitleTabFile::InitWithPath(const char* szFile)
 {
 	m_tabFile.InitWithPath(szFile);
 
@@ -311,6 +333,16 @@ void KTitleTabFile::InitWithPath(const char* szFile)
 	{
 		m_lstTitle.push_back(pContent[0]->lstTab[n]);
 	}
+
+	// 确保 Tab 文件的每一行都统一
+	for (int n = 1; n < m_tabFile.GetFileHight(); n++)
+	{
+		struct KTabFile::TabLine* pLine = pContent[n];
+		if (pLine->nNum != m_nWidth)
+			return false;
+	}
+
+	return true;
 }
 
 list<vector<char*>> KTitleTabFile::GetContent()

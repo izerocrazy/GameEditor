@@ -75,7 +75,7 @@ public:
 		return m_lstTitle;
 	}
 
-	void InitWithPath(const char* szFile);
+	bool InitWithPath(const char* szFile);
 	list<vector<char*>>	GetContent();
 	void SaveFile()
 	{
