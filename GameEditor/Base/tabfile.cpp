@@ -3,7 +3,7 @@
 
 KTabFile::KTabFile()
 {
-
+	m_hFile = NULL;
 }
 
 KTabFile::~KTabFile()
@@ -186,6 +186,49 @@ void KTabFile::InitWithPath(const char* szFile)
 	delete szFileContent;
 }
 
+void KTabFile::SaveFile()
+{
+	assert(m_hFile);
+	assert(m_nFileHight > 0);
+	unsigned long lContentBytes = 0;
+	for (int n = 0; n < m_nFileHight; n++)
+	{
+		struct TabLine* pLine = m_FileContent[n];
+		for (int i = 0; i < pLine->nNum; i++)
+		{
+			lContentBytes += strlen(pLine->lstTab[i]);
+		}
+		lContentBytes += pLine->nNum;	// 每行需要增加 '\t' + '\n'
+	}
+
+	lContentBytes--;	// 最后一行不需要加 '\n'
+
+	char* szContent = new char[lContentBytes];
+	char* pCur = szContent;
+	for (int n = 0; n < m_nFileHight; n++)
+	{
+		struct TabLine* pLine = m_FileContent[n];
+		for (int i = 0; i < pLine->nNum; i++)
+		{
+			strcpy(pCur, pLine->lstTab[i]);
+			pCur += strlen(pLine->lstTab[i]);
+			if (i != pLine->nNum - 1)
+				*pCur = '\t';
+
+			pCur++;
+		}
+		if (n != m_nFileHight - 1)
+		{
+			*pCur = '\n';
+		}
+		pCur++;
+	}
+
+	rewind(m_hFile);
+	unsigned long lWrited = (unsigned long)fwrite(szContent, 1, lContentBytes, m_hFile);
+	assert(lWrited == lContentBytes);
+}
+
 bool KTabFile::OpenFile(const char* szFile)
 {
 	/*char PathName[MAX_PATH];
@@ -203,7 +246,7 @@ bool KTabFile::OpenFile(const char* szFile)
 	}
 #endif	// #ifdef __linux
 
-	const char*	pMode = "rb";
+	const char*	pMode = "r+b";
 	/*if (WriteSupport)
 	{
 	if (g_IsFileExist(PathName))
@@ -213,6 +256,7 @@ bool KTabFile::OpenFile(const char* szFile)
 	}*/
 	m_hFile = fopen(szFile, pMode);
 
+	// 大小写
 #ifdef __linux
 	{
 		if (m_hFile == NULL)
@@ -289,4 +333,9 @@ list<vector<char*>> KTitleTabFile::GetContent()
 	}
 
 	return lstContent;
+}
+
+void KTitleTabFile::CloseFile()
+{
+	m_tabFile.CloseFile();
 }

@@ -52,6 +52,7 @@ private:
 public:
 	bool OpenFile(const char* szFile);
 	void CloseFile();
+	void SaveFile();
 private:
  	FILE*					m_hFile;
 
@@ -76,6 +77,11 @@ public:
 
 	void InitWithPath(const char* szFile);
 	list<vector<char*>>	GetContent();
+	void SaveFile()
+	{
+		m_tabFile.SaveFile();
+	}
+	void CloseFile();
 
 private:
 	vector<char*>			m_lstTitle;

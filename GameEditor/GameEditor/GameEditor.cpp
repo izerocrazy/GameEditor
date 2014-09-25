@@ -34,6 +34,8 @@ void ProcessCardSetting()
 		i++;
 	}
 
+	file.SaveFile();
+	file.CloseFile();
 	var.ShowVariant();
 
 	// variant 传值给一个 cardhelper 对象，并用其创建一个 card 对象
