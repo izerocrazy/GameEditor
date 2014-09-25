@@ -65,7 +65,7 @@ struct KTabFile::TabLine* KTabFile::CreateTabLine(const char* szLine, size_t nLi
 	// 遍历第一遍，找出多少个 \t
 	for (int n = 0; n < nLineLen; n++)
 	{
-		if (szLine[n] == d || n == nLineLen - 1)	// 当到达最后一个时，同样要算上
+		if (szLine[n] == d || n == nLineLen - 1)	// 当到达最后一个时，即便不是 \t 同样也要算上
 		{
 			pRet->nNum++;
 		}
@@ -95,7 +95,7 @@ struct KTabFile::TabLine* KTabFile::CreateTabLine(const char* szLine, size_t nLi
 			}
 			else
 			{
-				pRet->lstTab[nTabCur] = NULL;
+				pRet->lstTab[nTabCur] = "";
 			}
 
 			nTabCur++;
@@ -158,9 +158,14 @@ void KTabFile::InitWithPath(const char* szFile)
 	char* pLastCur = pCur;
 	for (int n = 0; n < nFileSize; n++)
 	{
-		if (szFileContent[0] == '\n' || n == nFileSize - 1)
+		if (szFileContent[n] == '\n' || n == nFileSize - 1)
 		{
 			int nLen = pCur - pLastCur;
+			if (n == nFileSize - 1)
+			{
+				nLen++;
+			}
+
 			m_FileContent[nFileCur] = CreateTabLine(pLastCur, nLen);
 
 			nFileCur++;
@@ -250,7 +255,13 @@ void KTitleTabFile::InitWithPath(const char* szFile)
 {
 	m_tabFile.InitWithPath(szFile);
 
-	// 初始化 title
+	// 初始化 title 和 width
+	struct KTabFile::TabLine** pContent = m_tabFile.GetContent();
+	m_nWidth =  pContent[0]->nNum;
+	for (int n = 0; n < m_nWidth; n++)
+	{
+		m_lstTitle.push_back(pContent[0]->lstTab[n]);
+	}
 }
 
 list<vector<char*>> KTitleTabFile::GetContent()
@@ -262,7 +273,14 @@ list<vector<char*>> KTitleTabFile::GetContent()
 	struct KTabFile::TabLine** pContent = m_tabFile.GetContent();
 	for (int n = 1; n < m_tabFile.GetFileHight(); n ++)
 	{
-		;
+		vector<char*> vecLine;
+		struct KTabFile::TabLine* pLine = pContent[n];
+		for (int i = 0; i < pLine->nNum; i++)
+		{
+			vecLine.push_back(pLine->lstTab[i]);
+		}
+
+		lstContent.push_back(vecLine);
 	}
 
 	return lstContent;
